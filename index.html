@@ -1,2 +1,359 @@
-<hi>Hi,I'm Anwesha</hi>
-<p>I am learning web development.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyCheck | Password Analyzer</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #10172a, #182c4e);
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            background: #1c2940;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #354866;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #b7c5da;
+            line-height: 1.5;
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .password-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        input {
+            width: 100%;
+            min-width: 0;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #526580;
+            background: #111b2d;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #63b3ff;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #toggleButton {
+            padding: 0 14px;
+            background: #354866;
+            color: white;
+        }
+
+        #analyzeButton {
+            width: 100%;
+            padding: 15px;
+            margin-top: 14px;
+            background: #60a5fa;
+            color: #10172a;
+            font-size: 16px;
+        }
+
+        button:hover {
+            opacity: 0.88;
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 20px;
+            border-radius: 14px;
+            background: #111b2d;
+        }
+
+        .result-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-top h2 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        #score {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .bar {
+            height: 9px;
+            background: #354866;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        #barFill {
+            height: 100%;
+            width: 0%;
+            background: #f87171;
+            transition: width 0.3s ease;
+        }
+
+        #strength {
+            font-weight: bold;
+            color: #fca5a5;
+        }
+
+        .checks {
+            list-style: none;
+            padding: 0;
+            margin: 18px 0 0;
+        }
+
+        .checks li {
+            padding: 9px 0;
+            color: #aebbd0;
+            border-bottom: 1px solid #293a53;
+        }
+
+        .checks li:last-child {
+            border-bottom: none;
+        }
+
+        .checks li.pass {
+            color: #86efac;
+        }
+
+        .note {
+            color: #aebbd0;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+
+        footer {
+            text-align: center;
+            color: #91a4bf;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 420px) {
+            .container {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <div class="logo">🔐</div>
+
+        <h1>KeyCheck</h1>
+
+        <p class="subtitle">
+            Password Strength Analyzer<br>
+            Check your password's basic security criteria.
+        </p>
+
+        <label for="password">Enter a test password</label>
+
+        <div class="password-row">
+            <input
+                type="password"
+                id="password"
+                placeholder="Type a fictional password"
+                autocomplete="off"
+                spellcheck="false"
+                maxlength="128"
+            >
+            <button id="toggleButton" type="button">
+                Show
+            </button>
+        </div>
+
+        <button id="analyzeButton" type="button">
+            Analyze Password
+        </button>
+
+        <section class="result" aria-live="polite">
+            <div class="result-top">
+                <h2>Password Strength</h2>
+                <span id="score">0/5</span>
+            </div>
+
+            <div class="bar">
+                <div id="barFill"></div>
+            </div>
+
+            <p id="strength">Waiting for input</p>
+
+            <ul class="checks">
+                <li id="lengthCheck">○ At least 8 characters</li>
+                <li id="digitCheck">○ Contains a number (0–9)</li>
+                <li id="upperCheck">○ Contains an uppercase letter</li>
+                <li id="lowerCheck">○ Contains a lowercase letter</li>
+                <li id="specialCheck">○ Contains a special character</li>
+            </ul>
+        </section>
+
+        <p class="note">
+            Privacy note: This demo analyzes the text locally in your
+            browser. It does not send it to a server or save it.
+            Never enter your real password into a demo tool.
+        </p>
+
+        <footer>
+            KeyCheck · Beginner Cybersecurity Project
+        </footer>
+    </main>
+
+    <script>
+        const passwordInput = document.getElementById("password");
+        const toggleButton = document.getElementById("toggleButton");
+        const analyzeButton = document.getElementById("analyzeButton");
+
+        const scoreDisplay = document.getElementById("score");
+        const strengthDisplay = document.getElementById("strength");
+        const barFill = document.getElementById("barFill");
+
+        function updateCheck(id, passed, message) {
+            const item = document.getElementById(id);
+
+            item.classList.toggle("pass", passed);
+            item.textContent = (passed ? "✓ " : "○ ") + message;
+        }
+
+        function analyzePassword() {
+            const password = passwordInput.value;
+
+            const hasLength = password.length >= 8;
+            const hasDigit = /[0-9]/.test(password);
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasSpecial = /[^A-Za-z0-9\s]/.test(password);
+
+            const checks = [
+                hasLength,
+                hasDigit,
+                hasUpper,
+                hasLower,
+                hasSpecial
+            ];
+
+            const score = checks.filter(Boolean).length;
+
+            updateCheck(
+                "lengthCheck",
+                hasLength,
+                "At least 8 characters"
+            );
+
+            updateCheck(
+                "digitCheck",
+                hasDigit,
+                "Contains a number (0–9)"
+            );
+
+            updateCheck(
+                "upperCheck",
+                hasUpper,
+                "Contains an uppercase letter"
+            );
+
+            updateCheck(
+                "lowerCheck",
+                hasLower,
+                "Contains a lowercase letter"
+            );
+
+            updateCheck(
+                "specialCheck",
+                hasSpecial,
+                "Contains a special character"
+            );
+
+            scoreDisplay.textContent = score + "/5";
+            barFill.style.width = (score / 5 * 100) + "%";
+
+            if (password.length === 0) {
+                strengthDisplay.textContent = "Waiting for input";
+                strengthDisplay.style.color = "#aebbd0";
+                barFill.style.background = "#526580";
+            } else if (score <= 2) {
+                strengthDisplay.textContent = "Weak";
+                strengthDisplay.style.color = "#f87171";
+                barFill.style.background = "#f87171";
+            } else if (score <= 4) {
+                strengthDisplay.textContent = "Moderate";
+                strengthDisplay.style.color = "#fbbf24";
+                barFill.style.background = "#fbbf24";
+            } else {
+                strengthDisplay.textContent = "Strong by these checks";
+                strengthDisplay.style.color = "#86efac";
+                barFill.style.background = "#4ade80";
+            }
+        }
+
+        toggleButton.addEventListener("click", function () {
+            const hidden = passwordInput.type === "password";
+
+            passwordInput.type = hidden ? "text" : "password";
+            toggleButton.textContent = hidden ? "Hide" : "Show";
+        });
+
+        analyzeButton.addEventListener("click", analyzePassword);
+
+        passwordInput.addEventListener("input", analyzePassword);
+    </script>
+</body>
+</html>
